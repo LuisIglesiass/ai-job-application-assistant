@@ -27,9 +27,10 @@ defineEmits<{
 }>()
 
 const options = [
-  { value: 'German',  label: 'Deutsch'  },
-  { value: 'English', label: 'English'  },
-  { value: 'Spanish', label: 'Español'  },
+  { value: 'German',     label: 'Deutsch'    },
+  { value: 'English',    label: 'English'    },
+  { value: 'Spanish',    label: 'Español'    },
+  { value: 'Portuguese', label: 'Português'  },
 ]
 </script>
 

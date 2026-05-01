@@ -1,6 +1,6 @@
 import { generateText } from '~/lib/ai-client'
 
-const ALLOWED_LANGUAGES = ['German', 'English', 'Spanish'] as const
+const ALLOWED_LANGUAGES = ['German', 'English', 'Spanish', 'Portuguese'] as const
 type OutputLanguage = typeof ALLOWED_LANGUAGES[number]
 
 interface AnalyzeRequest {
