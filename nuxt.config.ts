@@ -5,6 +5,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      title: 'AI Job Assistant',
       link: [
         { rel: 'icon', type: 'image/png', href: '/favicon.png' },
         { rel: 'apple-touch-icon', href: '/favicon.png' },
