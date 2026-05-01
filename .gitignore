@@ -1,0 +1,27 @@
+# Nuxt
+.nuxt/
+.output/
+.data/
+.cache/
+dist/
+
+# Env
+.env
+*.local
+
+# Node
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+
+.claude
