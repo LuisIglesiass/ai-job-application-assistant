@@ -3,6 +3,7 @@ import { generateText } from '~/lib/ai-client'
 interface AnalyzeRequest {
   cv: string
   jobOffer: string
+  softSkills?: string
 }
 
 interface AnalyzeResponse {
@@ -13,7 +14,7 @@ interface AnalyzeResponse {
   weaknesses: string[]
 }
 
-const MAX_CHARS = { cv: 6000, jobOffer: 12000 }
+const MAX_CHARS = { cv: 6000, jobOffer: 12000, softSkills: 800 }
 
 function truncate(text: string, max: number): string {
   return text.length > max ? text.slice(0, max) + '\n[truncated]' : text
@@ -24,31 +25,34 @@ function truncate(text: string, max: number): string {
 const COVER_LETTER_SYSTEM =
   'You are a precise career assistant. Write concise and realistic cover letters. Avoid generic phrases. Respond ONLY with a valid JSON object — no markdown, no extra text.'
 
-function coverLetterPrompt(cv: string, jobOffer: string): string {
+function coverLetterPrompt(cv: string, jobOffer: string, softSkills?: string): string {
+  const softSkillsBlock = softSkills
+    ? `\nCandidate's soft skills:\n${softSkills}\n- Weave 1–2 of the most relevant ones naturally into the letter\n- Do NOT list them explicitly — integrate them through examples or tone\n`
+    : ''
+
   return `CV:
 ${cv}
 
 Job Offer:
 ${jobOffer}
-
+${softSkillsBlock}
 Task:
 Write a professional cover letter in German.
 
 Rules:
-- Max 150 words
-- Focus on relevant experience only
-- No fluff
-- No repetition
+- Max 180 words
+- Focus on relevant experience and fit
+- No fluff, no repetition
 - Sound natural and human
 
 Respond with this JSON structure only:
 {"coverLetter": "string"}`
 }
 
-async function generateCoverLetter(cv: string, jobOffer: string, apiKey: string): Promise<string> {
+async function generateCoverLetter(cv: string, jobOffer: string, apiKey: string, softSkills?: string): Promise<string> {
   const raw = await generateText({
     system: COVER_LETTER_SYSTEM,
-    prompt: coverLetterPrompt(cv, jobOffer),
+    prompt: coverLetterPrompt(cv, jobOffer, softSkills),
     temperature: 0.4,
     maxTokens: 600,
     apiKey,
@@ -203,11 +207,12 @@ export default defineEventHandler(async (event): Promise<AnalyzeResponse> => {
 
   const cv = truncate(body.cv.trim(), MAX_CHARS.cv)
   const jobOffer = truncate(body.jobOffer.trim(), MAX_CHARS.jobOffer)
+  const softSkills = body.softSkills ? truncate(body.softSkills.trim(), MAX_CHARS.softSkills) : undefined
   const { aiApiKey } = useRuntimeConfig()
 
   try {
     const [coverLetter, { matchScore, reason }, { strengths, weaknesses }] = await Promise.all([
-      generateCoverLetter(cv, jobOffer, aiApiKey),
+      generateCoverLetter(cv, jobOffer, aiApiKey, softSkills),
       generateMatchScore(cv, jobOffer, aiApiKey),
       generateStrengthsWeaknesses(cv, jobOffer, aiApiKey),
     ])

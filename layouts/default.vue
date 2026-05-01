@@ -1,8 +1,17 @@
 <template>
   <div class="app-shell">
     <header class="app-header">
-      <div class="container">
-        <span class="app-header__logo">AI Job Assistant</span>
+      <div class="container app-header__inner">
+        <a href="/" class="app-header__logo">
+          <img
+            src="~/assets/images/16-9-logo-ai.png"
+            alt="AI Job Assistant"
+            class="app-header__logo-img"
+            width="160"
+            height="40"
+          />
+        </a>
+        <span class="app-header__badge">Beta</span>
       </div>
     </header>
 
@@ -14,7 +23,7 @@
 
     <footer class="app-footer">
       <div class="container">
-        <p class="app-footer__text">AI Job Assistant &copy; {{ year }}</p>
+        <p class="app-footer__text">MatchAI &copy; {{ year }} — Powered by DeepSeek</p>
       </div>
     </footer>
   </div>
@@ -32,20 +41,58 @@ const year = new Date().getFullYear()
 }
 
 .app-header {
-  background-color: $color-surface;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid $color-border;
-  padding-block: $space-4;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: $space-3;
+
+    @media (min-width: $bp-mobile) { padding-block: $space-4; }
+  }
 
   &__logo {
-    font-size: $font-size-lg;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    &:hover { text-decoration: none; }
+  }
+
+  &__logo-img {
+    height: 44px;
+    width: auto;
+    display: block;
+    object-fit: contain;
+
+    @media (min-width: $bp-mobile) { height: 60px; }
+    @media (min-width: $bp-tablet) { height: 80px; }
+  }
+
+  &__badge {
+    font-size: 0.7rem;
     font-weight: $font-weight-semibold;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: $color-primary;
+    background: $color-primary-light;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba($color-primary, 0.2);
   }
 }
 
 .app-main {
   flex: 1;
-  padding-block: $space-12;
+  padding-block: $space-8;
+
+  @media (min-width: $bp-tablet) { padding-block: $space-12; }
 }
 
 .app-footer {
