@@ -44,7 +44,7 @@ const options = [
   &__label {
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
-    color: $color-text;
+    color: var(--color-text);
     white-space: nowrap;
   }
 
@@ -56,19 +56,19 @@ const options = [
 
   &__btn {
     padding: 5px 14px;
-    border: 1.5px solid $color-border;
+    border: 1.5px solid var(--color-border);
     border-radius: $border-radius-base;
     background: transparent;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
     cursor: pointer;
     transition: color $transition-base, border-color $transition-base, background $transition-base, box-shadow $transition-base;
 
     &:hover:not(&--active) {
       border-color: $color-primary;
       color: $color-primary;
-      background: $color-primary-light;
+      background: var(--color-primary-light);
     }
 
     &--active {

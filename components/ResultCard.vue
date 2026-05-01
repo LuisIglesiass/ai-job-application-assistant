@@ -21,10 +21,10 @@ defineProps<{
 
 <style lang="scss" scoped>
 .result-card {
-  background: $color-surface;
-  border: 1px solid $color-border;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: $border-radius-xl;
-  box-shadow: $shadow-base;
+  box-shadow: var(--shadow-base);
   overflow: hidden;
 
   &__header {
@@ -32,8 +32,8 @@ defineProps<{
     align-items: center;
     justify-content: space-between;
     padding: $space-3 $space-4;
-    background: $gradient-subtle;
-    border-bottom: 1px solid $color-border;
+    background: var(--gradient-subtle);
+    border-bottom: 1px solid var(--color-border);
 
     @media (min-width: $bp-mobile) { padding: $space-4 $space-6; }
   }
@@ -52,7 +52,7 @@ defineProps<{
   &__title {
     font-size: $font-size-base;
     font-weight: $font-weight-semibold;
-    color: $color-text;
+    color: var(--color-text);
     letter-spacing: -0.01em;
   }
 

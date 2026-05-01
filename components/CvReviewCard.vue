@@ -99,7 +99,7 @@ const { t } = useI18n()
 
   &__divider {
     height: 1px;
-    background: $color-border;
+    background: var(--color-border);
   }
 
   &__section {
@@ -152,7 +152,7 @@ const { t } = useI18n()
 
   &__list-item {
     font-size: $font-size-sm;
-    color: $color-text;
+    color: var(--color-text);
     line-height: $line-height-base;
     padding: $space-2 $space-3;
     border-radius: $border-radius-base;
@@ -169,7 +169,7 @@ const { t } = useI18n()
     }
 
     &--danger {
-      background: $color-danger-bg;
+      background: var(--color-danger-bg);
       color: $color-error;
       border: 1px solid rgba($color-error, 0.15);
       padding-left: $space-6;
@@ -191,7 +191,7 @@ const { t } = useI18n()
     align-items: flex-start;
     gap: $space-3;
     font-size: $font-size-sm;
-    color: $color-text;
+    color: var(--color-text);
     line-height: $line-height-base;
   }
 
@@ -202,7 +202,7 @@ const { t } = useI18n()
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: $color-primary-light;
+    background: var(--color-primary-light);
     color: $color-primary;
     font-size: 0.72rem;
     font-weight: $font-weight-bold;
@@ -225,17 +225,17 @@ const { t } = useI18n()
   &__rewrite-label {
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
 
   &__rewrite-text {
     font-size: $font-size-base;
-    color: $color-text;
+    color: var(--color-text);
     line-height: $line-height-base;
     padding: $space-4;
-    background: $color-success-bg;
+    background: var(--color-success-bg);
     border: 1px solid rgba($color-success, 0.2);
     border-radius: $border-radius-base;
   }
@@ -252,10 +252,10 @@ const { t } = useI18n()
     align-items: flex-start;
     gap: $space-2;
     font-size: $font-size-sm;
-    color: $color-text;
+    color: var(--color-text);
     line-height: $line-height-base;
     padding: $space-3 $space-4;
-    background: $color-success-bg;
+    background: var(--color-success-bg);
     border: 1px solid rgba($color-success, 0.2);
     border-radius: $border-radius-base;
 

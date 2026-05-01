@@ -178,7 +178,7 @@ function handleOptimize() {
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: $color-primary;
-  background: $color-primary-light;
+  background: var(--color-primary-light);
   border: 1px solid rgba($color-primary, 0.2);
   padding: 5px 14px;
   border-radius: 999px;
@@ -187,7 +187,7 @@ function handleOptimize() {
 .home__title {
   font-size: clamp(1.65rem, 6vw, 3rem);
   font-weight: $font-weight-extrabold;
-  color: $color-text;
+  color: var(--color-text);
   line-height: 1.15;
   letter-spacing: -0.03em;
 }
@@ -202,7 +202,7 @@ function handleOptimize() {
 
 .home__subtitle {
   font-size: $font-size-base;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
   line-height: 1.65;
   max-width: 54ch;
 
@@ -214,11 +214,11 @@ function handleOptimize() {
   display: flex;
   flex-direction: column;
   gap: $space-4;
-  background: $color-surface;
-  border: 1px solid $color-border;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: $border-radius-lg;
   padding: $space-4;
-  box-shadow: $shadow-base;
+  box-shadow: var(--shadow-base);
 
   @media (min-width: $bp-mobile) {
     gap: $space-6;
@@ -242,12 +242,12 @@ function handleOptimize() {
 
 .home__soft-skills {
   padding-top: $space-2;
-  border-top: 1px dashed $color-border;
+  border-top: 1px dashed var(--color-border);
 }
 
 .home__output-lang {
   padding-top: $space-2;
-  border-top: 1px dashed $color-border;
+  border-top: 1px dashed var(--color-border);
 }
 
 .home__actions {
@@ -268,7 +268,7 @@ function handleOptimize() {
   align-items: center;
   gap: $space-3;
   padding: $space-3 $space-4;
-  background: $color-danger-bg;
+  background: var(--color-danger-bg);
   border: 1px solid rgba($color-error, 0.2);
   border-radius: $border-radius-base;
   color: $color-error;
@@ -300,7 +300,7 @@ function handleOptimize() {
 
   &__cover-letter {
     font-size: $font-size-base;
-    color: $color-text;
+    color: var(--color-text);
     line-height: 1.85;
     white-space: pre-wrap;
     max-width: 68ch;
@@ -322,9 +322,9 @@ function handleOptimize() {
   padding: 4px 12px;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
   background: transparent;
-  border: 1px solid $color-border;
+  border: 1px solid var(--color-border);
   border-radius: $border-radius-base;
   cursor: pointer;
   transition: color $transition-base, border-color $transition-base, background $transition-base;
@@ -332,13 +332,13 @@ function handleOptimize() {
   &:hover {
     color: $color-primary;
     border-color: $color-primary;
-    background: $color-primary-light;
+    background: var(--color-primary-light);
   }
 
   &--copied {
     color: $color-success;
     border-color: $color-success;
-    background: $color-success-bg;
+    background: var(--color-success-bg);
   }
 
   &__icon { font-size: 0.9rem; }
