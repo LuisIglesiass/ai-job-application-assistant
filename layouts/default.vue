@@ -11,6 +11,10 @@
             height="40"
           />
         </a>
+        <nav class="app-header__nav">
+          <NuxtLink to="/" class="app-header__nav-link">{{ t('nav_job_match') }}</NuxtLink>
+          <NuxtLink to="/review" class="app-header__nav-link">{{ t('nav_cv_review') }}</NuxtLink>
+        </nav>
         <div class="app-header__right">
           <LangSwitcher />
           <span class="app-header__badge">Beta</span>
@@ -33,7 +37,10 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from '~/composables/useI18n'
+
 const year = new Date().getFullYear()
+const { t } = useI18n()
 </script>
 
 <style lang="scss" scoped>
@@ -76,6 +83,33 @@ const year = new Date().getFullYear()
 
     @media (min-width: $bp-mobile) { height: 60px; }
     @media (min-width: $bp-tablet) { height: 80px; }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+  }
+
+  &__nav-link {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-muted;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: $border-radius-base;
+    transition: color $transition-base, background $transition-base;
+
+    &:hover {
+      color: $color-primary;
+      background: $color-primary-light;
+    }
+
+    &.router-link-active {
+      color: $color-primary;
+      background: $color-primary-light;
+      font-weight: $font-weight-semibold;
+    }
   }
 
   &__right {
