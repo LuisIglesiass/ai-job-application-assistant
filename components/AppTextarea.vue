@@ -1,5 +1,5 @@
 <template>
-  <div class="app-textarea">
+  <div class="app-textarea" :class="{ 'app-textarea--invalid': !!error }">
     <label v-if="label" :for="id" class="app-textarea__label">
       {{ label }}
       <span v-if="required" class="app-textarea__required" aria-hidden="true">*</span>
@@ -14,7 +14,8 @@
       :value="modelValue"
       @input="onInput"
     />
-    <p v-if="hint" class="app-textarea__hint">{{ hint }}</p>
+    <p v-if="error" class="app-textarea__error" role="alert">{{ error }}</p>
+    <p v-else-if="hint" class="app-textarea__hint">{{ hint }}</p>
   </div>
 </template>
 
@@ -25,6 +26,7 @@ interface Props {
   label?: string
   placeholder?: string
   hint?: string
+  error?: string | null
   rows?: number
   required?: boolean
   disabled?: boolean
@@ -94,9 +96,19 @@ function onInput(event: Event): void {
     }
   }
 
+  &--invalid &__field {
+    border-color: $color-error;
+    &:focus { box-shadow: 0 0 0 4px rgba($color-error, 0.10); }
+  }
+
   &__hint {
     font-size: $font-size-sm;
     color: $color-text-muted;
+  }
+
+  &__error {
+    font-size: $font-size-sm;
+    color: $color-error;
   }
 }
 </style>

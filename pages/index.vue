@@ -22,7 +22,9 @@
           :rows="9"
           required
           hint="Supports full descriptions — the longer, the better."
+          :error="fieldErrors.jobOffer"
           :disabled="isPending"
+          @input="clearFieldError('jobOffer')"
         />
 
         <AppTextarea
@@ -33,7 +35,9 @@
           :rows="9"
           required
           hint="Plain text works best."
+          :error="fieldErrors.cv"
           :disabled="isPending"
+          @input="clearFieldError('cv')"
         />
       </div>
 
@@ -102,7 +106,7 @@ import { useJobAnalysis } from '~/composables/useJobAnalysis'
 
 definePageMeta({ layout: 'default' })
 
-const { jobOffer, cv, softSkills, isPending, canSubmit, result, error, handleAnalyze } = useJobAnalysis()
+const { jobOffer, cv, softSkills, isPending, canSubmit, result, error, fieldErrors, clearFieldError, handleAnalyze } = useJobAnalysis()
 
 const copied = ref(false)
 

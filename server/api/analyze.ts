@@ -14,10 +14,16 @@ interface AnalyzeResponse {
   weaknesses: string[]
 }
 
+const MIN_CHARS = { cv: 20, jobOffer: 20 }
 const MAX_CHARS = { cv: 6000, jobOffer: 12000, softSkills: 800 }
 
 function truncate(text: string, max: number): string {
   return text.length > max ? text.slice(0, max) + '\n[truncated]' : text
+}
+
+function safeParseJSON<T>(raw: string): T {
+  const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '')
+  return JSON.parse(cleaned) as T
 }
 
 // ─── Cover Letter ────────────────────────────────────────────────────────────
@@ -58,7 +64,7 @@ async function generateCoverLetter(cv: string, jobOffer: string, apiKey: string,
     apiKey,
   })
 
-  const parsed = JSON.parse(raw) as { coverLetter: string }
+  const parsed = safeParseJSON<{ coverLetter: string }>(raw)
 
   if (typeof parsed.coverLetter !== 'string' || parsed.coverLetter.trim() === '') {
     throw new Error('coverLetter field missing or empty')
@@ -116,7 +122,7 @@ async function generateMatchScore(cv: string, jobOffer: string, apiKey: string):
     apiKey,
   })
 
-  const parsed = JSON.parse(raw) as MatchScoreResult
+  const parsed = safeParseJSON<MatchScoreResult>(raw)
 
   if (typeof parsed.matchScore !== 'number' || parsed.matchScore < 0 || parsed.matchScore > 100) {
     throw new Error('matchScore missing or out of range')
@@ -180,7 +186,7 @@ async function generateStrengthsWeaknesses(
     apiKey,
   })
 
-  const parsed = JSON.parse(raw) as StrengthsWeaknessesResult
+  const parsed = safeParseJSON<StrengthsWeaknessesResult>(raw)
 
   if (!Array.isArray(parsed.strengths) || !Array.isArray(parsed.weaknesses)) {
     throw new Error('strengths or weaknesses field missing or not an array')
@@ -197,29 +203,43 @@ async function generateStrengthsWeaknesses(
 export default defineEventHandler(async (event): Promise<AnalyzeResponse> => {
   const body = await readBody<AnalyzeRequest>(event)
 
-  if (!body?.cv || typeof body.cv !== 'string' || body.cv.trim() === '') {
-    throw createError({ statusCode: 400, message: 'Field "cv" is required and must be a non-empty string.' })
+  const cv = typeof body?.cv === 'string' ? body.cv.trim() : ''
+  const jobOffer = typeof body?.jobOffer === 'string' ? body.jobOffer.trim() : ''
+
+  if (!cv) {
+    throw createError({ statusCode: 400, message: 'Your CV is required.' })
+  }
+  if (cv.length < MIN_CHARS.cv) {
+    throw createError({ statusCode: 400, message: 'Your CV is too short. Please add more detail.' })
+  }
+  if (!jobOffer) {
+    throw createError({ statusCode: 400, message: 'The job description is required.' })
+  }
+  if (jobOffer.length < MIN_CHARS.jobOffer) {
+    throw createError({ statusCode: 400, message: 'The job description is too short. Please add more detail.' })
   }
 
-  if (!body?.jobOffer || typeof body.jobOffer !== 'string' || body.jobOffer.trim() === '') {
-    throw createError({ statusCode: 400, message: 'Field "jobOffer" is required and must be a non-empty string.' })
-  }
-
-  const cv = truncate(body.cv.trim(), MAX_CHARS.cv)
-  const jobOffer = truncate(body.jobOffer.trim(), MAX_CHARS.jobOffer)
-  const softSkills = body.softSkills ? truncate(body.softSkills.trim(), MAX_CHARS.softSkills) : undefined
   const { aiApiKey } = useRuntimeConfig()
+
+  if (!aiApiKey) {
+    console.error('[analyze] AI_API_KEY is not configured')
+    throw createError({ statusCode: 503, message: 'The AI service is not configured. Please contact support.' })
+  }
+
+  const cvTruncated = truncate(cv, MAX_CHARS.cv)
+  const jobOfferTruncated = truncate(jobOffer, MAX_CHARS.jobOffer)
+  const softSkills = body.softSkills ? truncate(body.softSkills.trim(), MAX_CHARS.softSkills) : undefined
 
   try {
     const [coverLetter, { matchScore, reason }, { strengths, weaknesses }] = await Promise.all([
-      generateCoverLetter(cv, jobOffer, aiApiKey, softSkills),
-      generateMatchScore(cv, jobOffer, aiApiKey),
-      generateStrengthsWeaknesses(cv, jobOffer, aiApiKey),
+      generateCoverLetter(cvTruncated, jobOfferTruncated, aiApiKey, softSkills),
+      generateMatchScore(cvTruncated, jobOfferTruncated, aiApiKey),
+      generateStrengthsWeaknesses(cvTruncated, jobOfferTruncated, aiApiKey),
     ])
 
     return { coverLetter, matchScore, reason, strengths, weaknesses }
   } catch (err) {
     console.error('[analyze] generation failed:', err)
-    throw createError({ statusCode: 502, message: 'AI service unavailable.' })
+    throw createError({ statusCode: 502, message: 'The AI could not process your request. Please try again.' })
   }
 })
