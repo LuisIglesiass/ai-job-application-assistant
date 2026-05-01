@@ -58,7 +58,7 @@ function onInput(event: Event): void {
   &__label {
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
-    color: $color-text;
+    color: var(--color-text);
     letter-spacing: -0.01em;
   }
 
@@ -70,29 +70,29 @@ function onInput(event: Event): void {
   &__field {
     width: 100%;
     padding: $space-3 $space-4;
-    border: 1.5px solid $color-border;
+    border: 1.5px solid var(--color-border);
     border-radius: $border-radius-base;
-    background-color: rgba(255, 255, 255, 0.7);
-    color: $color-text;
+    background-color: var(--color-surface-alpha);
+    color: var(--color-text);
     resize: vertical;
     transition: border-color $transition-base, box-shadow $transition-base, background-color $transition-base;
 
     &::placeholder {
-      color: $color-text-muted;
+      color: var(--color-text-muted);
       opacity: 0.7;
     }
 
     &:focus {
       outline: none;
       border-color: $color-primary;
-      background-color: $color-surface;
+      background-color: var(--color-surface);
       box-shadow: $shadow-glow;
     }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      background-color: $color-bg;
+      background-color: var(--color-bg-disabled);
     }
   }
 
@@ -103,7 +103,7 @@ function onInput(event: Event): void {
 
   &__hint {
     font-size: $font-size-sm;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
   }
 
   &__error {

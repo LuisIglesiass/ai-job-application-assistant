@@ -80,7 +80,7 @@ withDefaults(defineProps<Props>(), {
     box-shadow: none;
 
     &:hover:not(:disabled) {
-      background: $color-primary-light;
+      background: var(--color-primary-light);
       border-color: $color-primary;
     }
   }

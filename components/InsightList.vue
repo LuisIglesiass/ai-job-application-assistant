@@ -26,10 +26,10 @@ defineProps<{
   padding: $space-4;
 
   @media (min-width: $bp-mobile) { padding: $space-6; }
-  background: $color-surface;
-  border: 1px solid $color-border;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: $border-radius-lg;
-  box-shadow: $shadow-sm;
+  box-shadow: var(--shadow-sm);
   border-top: 3px solid transparent;
 
   &--strength { border-top-color: $color-success; }
@@ -54,11 +54,11 @@ defineProps<{
     flex-shrink: 0;
 
     .insight-list--strength & {
-      background: $color-success-bg;
+      background: var(--color-success-bg);
       color: $color-success;
     }
     .insight-list--weakness & {
-      background: $color-danger-bg;
+      background: var(--color-danger-bg);
       color: $color-error;
     }
   }
@@ -66,7 +66,7 @@ defineProps<{
   &__title {
     font-size: $font-size-base;
     font-weight: $font-weight-semibold;
-    color: $color-text;
+    color: var(--color-text);
     letter-spacing: -0.01em;
   }
 
@@ -82,7 +82,7 @@ defineProps<{
     align-items: flex-start;
     gap: $space-3;
     font-size: $font-size-sm;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
     line-height: $line-height-base;
   }
 

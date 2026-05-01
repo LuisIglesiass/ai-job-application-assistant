@@ -31,8 +31,8 @@ const options = [
   display: flex;
   align-items: center;
   gap: 2px;
-  background: $color-bg;
-  border: 1px solid $color-border;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
   border-radius: $border-radius-base;
   padding: 3px;
 
@@ -43,20 +43,20 @@ const options = [
     background: transparent;
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
     cursor: pointer;
     transition: color $transition-base, background $transition-base;
     letter-spacing: 0.03em;
 
     &:hover:not(&--active) {
-      color: $color-text;
-      background: $color-surface;
+      color: var(--color-text);
+      background: var(--color-surface);
     }
 
     &--active {
-      background: $color-surface;
+      background: var(--color-surface);
       color: $color-primary;
-      box-shadow: $shadow-sm;
+      box-shadow: var(--shadow-sm);
     }
   }
 }

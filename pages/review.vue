@@ -104,7 +104,7 @@ async function handleSubmit() {
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: $color-primary;
-  background: $color-primary-light;
+  background: var(--color-primary-light);
   border: 1px solid rgba($color-primary, 0.2);
   padding: 5px 14px;
   border-radius: 999px;
@@ -113,7 +113,7 @@ async function handleSubmit() {
 .review-page__title {
   font-size: clamp(1.65rem, 6vw, 3rem);
   font-weight: $font-weight-extrabold;
-  color: $color-text;
+  color: var(--color-text);
   line-height: 1.15;
   letter-spacing: -0.03em;
 }
@@ -128,7 +128,7 @@ async function handleSubmit() {
 
 .review-page__subtitle {
   font-size: $font-size-base;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
   line-height: 1.65;
   max-width: 54ch;
 
@@ -140,11 +140,11 @@ async function handleSubmit() {
   display: flex;
   flex-direction: column;
   gap: $space-4;
-  background: $color-surface;
-  border: 1px solid $color-border;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: $border-radius-lg;
   padding: $space-4;
-  box-shadow: $shadow-base;
+  box-shadow: var(--shadow-base);
 
   @media (min-width: $bp-mobile) {
     gap: $space-6;
@@ -173,7 +173,7 @@ async function handleSubmit() {
   align-items: center;
   gap: $space-3;
   padding: $space-3 $space-4;
-  background: $color-danger-bg;
+  background: var(--color-danger-bg);
   border: 1px solid rgba($color-error, 0.2);
   border-radius: $border-radius-base;
   color: $color-error;

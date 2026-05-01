@@ -132,10 +132,10 @@ $chip-width: 148px;
   align-items: center;
   gap: $space-8;
   padding: $space-8 $space-4;
-  background: $color-surface;
-  border: 1px solid $color-border;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: $border-radius-xl;
-  box-shadow: $shadow-base;
+  box-shadow: var(--shadow-base);
   overflow: hidden;
 
   @media (min-width: $bp-mobile) { padding: $space-12 $space-8; }
@@ -160,8 +160,8 @@ $chip-width: 148px;
   position: relative;
   width: $doc-width;
   height: $doc-height;
-  background: #fff;
-  border: 1px solid $color-border;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.06),
@@ -220,10 +220,10 @@ $chip-width: 148px;
 // ─── Skeleton lines ───────────────────────────────────────────────────────────
 .rv-loader__line {
   height: 7px;
-  background: #e8eaf0;
+  background: var(--color-doc-line);
   border-radius: 4px;
 
-  &--thick { height: 11px; background: #d0d4e0; }
+  &--thick { height: 11px; background: var(--color-doc-line-thick); }
   &--full   { width: 100%; }
   &--long   { width: 88%; }
   &--med    { width: 70%; }
@@ -244,9 +244,9 @@ $chip-width: 148px;
   padding: 5px 10px;
   border-radius: 999px;
   white-space: nowrap;
-  background: $color-surface;
-  border: 1px solid $color-border;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   width: $chip-width;
   animation: chip-appear $beam-duration ease-in-out infinite;
 
@@ -298,7 +298,7 @@ $chip-width: 148px;
 .rv-loader__msg {
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
   text-align: center;
   letter-spacing: -0.01em;
 }
@@ -306,7 +306,7 @@ $chip-width: 148px;
 .rv-loader__progress {
   width: 100%;
   height: 3px;
-  background: $color-primary-light;
+  background: var(--color-primary-light);
   border-radius: 99px;
   overflow: hidden;
 }

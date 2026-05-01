@@ -4,7 +4,7 @@
       <div class="container app-header__inner">
         <a href="/" class="app-header__logo">
           <img
-            src="~/assets/images/16-9-logo-ai.png"
+            :src="logoSrc"
             alt="AI Job Assistant"
             class="app-header__logo-img"
             width="160"
@@ -16,6 +16,7 @@
           <NuxtLink to="/review" class="app-header__nav-link">{{ t('nav_cv_review') }}</NuxtLink>
         </nav>
         <div class="app-header__right">
+          <ThemeToggle />
           <LangSwitcher />
           <span class="app-header__badge">Beta</span>
         </div>
@@ -37,10 +38,18 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
+import logoLight from '~/assets/images/16-9-logo-ai.png'
+import logoDark from '~/assets/images/16-9-logo-ai-dark.png'
 import { useI18n } from '~/composables/useI18n'
+import { useTheme } from '~/composables/useTheme'
 
 const year = new Date().getFullYear()
 const { t } = useI18n()
+const { isDark, init } = useTheme()
+const logoSrc = computed(() => isDark.value ? logoDark : logoLight)
+
+onMounted(() => init())
 </script>
 
 <style lang="scss" scoped>
@@ -54,10 +63,10 @@ const { t } = useI18n()
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.80);
+  background: var(--header-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid var(--color-border);
 
   &__inner {
     display: flex;
@@ -94,7 +103,7 @@ const { t } = useI18n()
   &__nav-link {
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
     text-decoration: none;
     padding: 6px 14px;
     border-radius: $border-radius-base;
@@ -102,12 +111,12 @@ const { t } = useI18n()
 
     &:hover {
       color: $color-primary;
-      background: $color-primary-light;
+      background: var(--color-primary-light);
     }
 
     &.router-link-active {
       color: $color-primary;
-      background: $color-primary-light;
+      background: var(--color-primary-light);
       font-weight: $font-weight-semibold;
     }
   }
@@ -124,7 +133,7 @@ const { t } = useI18n()
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: $color-primary;
-    background: $color-primary-light;
+    background: var(--color-primary-light);
     padding: 3px 10px;
     border-radius: 999px;
     border: 1px solid rgba($color-primary, 0.2);
@@ -139,12 +148,12 @@ const { t } = useI18n()
 }
 
 .app-footer {
-  border-top: 1px solid $color-border;
+  border-top: 1px solid var(--color-border);
   padding-block: $space-6;
 
   &__text {
     font-size: $font-size-sm;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
     text-align: center;
   }
 }

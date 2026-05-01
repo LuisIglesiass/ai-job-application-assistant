@@ -69,10 +69,10 @@ onUnmounted(() => clearInterval(timer))
   justify-content: center;
   gap: $space-6;
   padding: $space-8 $space-4;
-  background: $color-surface;
-  border: 1px solid $color-border;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: $border-radius-lg;
-  box-shadow: $shadow-base;
+  box-shadow: var(--shadow-base);
   overflow: hidden;
   min-height: 260px;
 
@@ -148,8 +148,8 @@ onUnmounted(() => clearInterval(timer))
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: $color-surface;
-  box-shadow: $shadow-sm;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   display: grid;
   place-items: center;
   z-index: 1;
@@ -178,7 +178,7 @@ onUnmounted(() => clearInterval(timer))
 .loader__message {
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
-  color: $color-text-muted;
+  color: var(--color-text-muted);
   letter-spacing: -0.01em;
 }
 

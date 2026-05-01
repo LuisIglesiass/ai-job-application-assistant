@@ -67,10 +67,10 @@ const scorePillClass = computed(() => {
   text-align: center;
   gap: $space-6;
   padding: $space-6;
-  background: $color-surface;
-  border: 1px solid $color-border;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: $border-radius-lg;
-  box-shadow: $shadow-base;
+  box-shadow: var(--shadow-base);
 
   @media (min-width: $bp-mobile) {
     flex-direction: row;
@@ -88,12 +88,12 @@ const scorePillClass = computed(() => {
       from 0deg,
       $color-primary 0%,
       $color-accent calc(var(--score, 0) * 1%),
-      $color-border calc(var(--score, 0) * 1%)
+      var(--score-ring-track) calc(var(--score, 0) * 1%)
     );
     display: grid;
     place-items: center;
     flex-shrink: 0;
-    box-shadow: 0 0 0 1px $color-border, 0 4px 24px rgba(79, 70, 229, 0.18);
+    box-shadow: 0 0 0 1px var(--color-border), 0 4px 24px rgba(79, 70, 229, 0.18);
 
     @media (min-width: $bp-mobile) { width: 136px; height: 136px; }
   }
@@ -102,7 +102,7 @@ const scorePillClass = computed(() => {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: $color-surface;
+    background: var(--color-surface);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -126,7 +126,7 @@ const scorePillClass = computed(() => {
 
   &__unit {
     font-size: $font-size-sm;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
     line-height: 1;
   }
 
@@ -150,7 +150,7 @@ const scorePillClass = computed(() => {
   &__label {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
-    color: $color-text;
+    color: var(--color-text);
     letter-spacing: -0.02em;
   }
 
@@ -162,14 +162,14 @@ const scorePillClass = computed(() => {
     padding: 3px 10px;
     border-radius: 999px;
 
-    &--good    { background: $color-success-bg; color: $color-success; }
-    &--partial { background: #fff7ed; color: #c2410c; }
-    &--weak    { background: $color-danger-bg; color: $color-error; }
+    &--good    { background: var(--color-success-bg); color: $color-success; }
+    &--partial { background: var(--color-partial-bg); color: var(--color-partial-text); }
+    &--weak    { background: var(--color-danger-bg);  color: $color-error; }
   }
 
   &__reason {
     font-size: $font-size-base;
-    color: $color-text-muted;
+    color: var(--color-text-muted);
     line-height: $line-height-base;
     max-width: 52ch;
   }
