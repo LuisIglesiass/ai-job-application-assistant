@@ -26,7 +26,7 @@
 
     <footer class="app-footer">
       <div class="container">
-        <p class="app-footer__text">MatchAI &copy; {{ year }} — Powered by DeepSeek</p>
+        <p class="app-footer__text">MatchAI &copy; {{ year }} — Made by Luis Iglesias</p>
       </div>
     </footer>
   </div>
