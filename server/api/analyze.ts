@@ -1,3 +1,5 @@
+import { generateText } from '~/lib/ai-client'
+
 interface AnalyzeRequest {
   cv: string
   jobOffer: string
@@ -11,6 +13,18 @@ interface AnalyzeResponse {
   weaknesses: string[]
 }
 
+const SYSTEM_PROMPT = `You are an expert career coach and recruiter.
+Given a CV and a job offer, you must respond ONLY with a valid JSON object — no markdown, no explanation.
+The JSON must follow this exact structure:
+{
+  "coverLetter": "string",
+  "matchScore": number between 0 and 100,
+  "reason": "string",
+  "strengths": ["string", ...],
+  "weaknesses": ["string", ...]
+}
+Write the coverLetter in the same language as the job offer.`
+
 export default defineEventHandler(async (event): Promise<AnalyzeResponse> => {
   const body = await readBody<AnalyzeRequest>(event)
 
@@ -22,33 +36,42 @@ export default defineEventHandler(async (event): Promise<AnalyzeResponse> => {
     throw createError({ statusCode: 400, message: 'Field "jobOffer" is required and must be a non-empty string.' })
   }
 
-  return {
-    coverLetter: `Sehr geehrte Damen und Herren,
+  const prompt = `CV:\n${body.cv.trim()}\n\nJob Offer:\n${body.jobOffer.trim()}`
 
-mit großem Interesse habe ich Ihre Stellenausschreibung gelesen und bewerbe mich hiermit um die ausgeschriebene Position. Meine bisherige Berufserfahrung im Bereich Softwareentwicklung sowie meine fundierten Kenntnisse in modernen Web-Technologien machen mich zu einem geeigneten Kandidaten für diese Rolle.
+  const { aiApiKey } = useRuntimeConfig()
 
-In meinen bisherigen Projekten habe ich umfangreiche Erfahrungen mit agilen Entwicklungsmethoden gesammelt und erfolgreich in interdisziplinären Teams mitgewirkt. Dabei habe ich stets Wert auf sauberen, wartbaren Code und eine enge Zusammenarbeit mit den jeweiligen Fachabteilungen gelegt.
-
-Ich freue mich auf die Möglichkeit, meine Fähigkeiten in Ihrem Unternehmen einzubringen und gemeinsam innovative Lösungen zu gestalten. Über eine Einladung zu einem persönlichen Gespräch würde ich mich sehr freuen.
-
-Mit freundlichen Grüßen`,
-
-    matchScore: 76,
-
-    reason:
-      'Das Profil deckt die wesentlichen Anforderungen der Stelle ab, insbesondere im Bereich der Webentwicklung und der Teamarbeit. Einige spezialisierte Kenntnisse fehlen jedoch, was den Score leicht mindert.',
-
-    strengths: [
-      'Solide Erfahrung mit modernen Web-Frameworks (Vue, React)',
-      'Nachgewiesene Fähigkeit zur Arbeit in agilen Teams',
-      'Klare Kommunikation und strukturierte Arbeitsweise',
-      'Erfahrung mit CI/CD-Pipelines und DevOps-Grundlagen',
-    ],
-
-    weaknesses: [
-      'Keine nachgewiesene Erfahrung mit dem geforderten Cloud-Provider (AWS)',
-      'Kenntnisse im Bereich maschinelles Lernen nicht explizit belegt',
-      'Fehlende Zertifizierungen, die in der Ausschreibung erwähnt werden',
-    ],
+  let raw: string
+  try {
+    raw = await generateText({
+      system: SYSTEM_PROMPT,
+      prompt,
+      temperature: 0.3,
+      maxTokens: 1500,
+      apiKey: aiApiKey,
+    })
+  } catch (err) {
+    console.error('[analyze] AI generation failed:', err)
+    throw createError({ statusCode: 502, message: 'AI service unavailable.' })
   }
+
+  let parsed: AnalyzeResponse
+  try {
+    parsed = JSON.parse(raw) as AnalyzeResponse
+  } catch {
+    console.error('[analyze] Failed to parse AI response as JSON:', raw)
+    throw createError({ statusCode: 502, message: 'AI returned an unexpected response format.' })
+  }
+
+  if (
+    typeof parsed.coverLetter !== 'string' ||
+    typeof parsed.matchScore !== 'number' ||
+    typeof parsed.reason !== 'string' ||
+    !Array.isArray(parsed.strengths) ||
+    !Array.isArray(parsed.weaknesses)
+  ) {
+    console.error('[analyze] AI response missing required fields:', parsed)
+    throw createError({ statusCode: 502, message: 'AI response is incomplete.' })
+  }
+
+  return parsed
 })
