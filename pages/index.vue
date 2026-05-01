@@ -94,11 +94,29 @@
           <p class="results__cover-letter">{{ result.coverLetter }}</p>
         </ResultCard>
 
-        <div class="results__retry">
+        <div class="results__actions">
           <AppButton variant="secondary" type="button" @click="handleAnalyze" :disabled="isPending">
             {{ t('re_analyze_btn') }}
           </AppButton>
+          <AppButton variant="secondary" type="button" :loading="isOptimizing" :disabled="isOptimizing" @click="handleOptimize">
+            {{ isOptimizing ? t('opt_btn_loading') : t('opt_btn') }}
+          </AppButton>
         </div>
+
+        <!-- Optimizer error -->
+        <div v-if="optimizeError" class="home__error" role="alert">
+          <span class="home__error-icon" aria-hidden="true">⚠</span>
+          <p>{{ optimizeError }}</p>
+        </div>
+
+        <!-- Optimizer results -->
+        <transition name="fade">
+          <ResultCard v-if="optimizeResult" :title="t('opt_title')">
+            <CvOptimizerCard :result="optimizeResult" />
+          </ResultCard>
+        </transition>
+
+
       </div>
     </transition>
 
@@ -109,11 +127,13 @@
 import { ref } from 'vue'
 import { useI18n } from '~/composables/useI18n'
 import { useJobAnalysis } from '~/composables/useJobAnalysis'
+import { useOptimize } from '~/composables/useOptimize'
 
 definePageMeta({ layout: 'default' })
 
 const { t } = useI18n()
 const { jobOffer, cv, softSkills, outputLanguage, isPending, canSubmit, result, error, fieldErrors, clearFieldError, handleAnalyze } = useJobAnalysis()
+const { isPending: isOptimizing, result: optimizeResult, error: optimizeError, optimize } = useOptimize()
 
 const copied = ref(false)
 
@@ -122,6 +142,10 @@ async function copyLetter() {
   await navigator.clipboard.writeText(result.value.coverLetter)
   copied.value = true
   setTimeout(() => { copied.value = false }, 2000)
+}
+
+function handleOptimize() {
+  optimize(cv.value, jobOffer.value)
 }
 </script>
 
@@ -282,9 +306,11 @@ async function copyLetter() {
     max-width: 68ch;
   }
 
-  &__retry {
+  &__actions {
     display: flex;
     justify-content: center;
+    gap: $space-3;
+    flex-wrap: wrap;
   }
 }
 
