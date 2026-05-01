@@ -125,6 +125,69 @@ async function generateMatchScore(cv: string, jobOffer: string, apiKey: string):
   return parsed
 }
 
+// ─── Strengths & Weaknesses ───────────────────────────────────────────────────
+
+const STRENGTHS_WEAKNESSES_SYSTEM =
+  'You are a strict and practical career evaluator. You identify relevant strengths and weaknesses based on job requirements. Be concise and realistic.'
+
+function strengthsWeaknessesPrompt(cv: string, jobOffer: string): string {
+  return `CV:
+${cv}
+
+Job Offer:
+${jobOffer}
+
+Task:
+Identify key strengths and weaknesses of the candidate relative to the job.
+
+Instructions:
+- Focus only on relevant points
+- Avoid generic phrases
+- Be specific and concrete
+- Think like a recruiter
+
+Return ONLY valid JSON:
+{"strengths": ["string"], "weaknesses": ["string"]}
+
+Constraints:
+- strengths: max 4 items
+- weaknesses: max 3 items
+- each item max 10 words
+- no repetition
+- no markdown
+- no extra text`
+}
+
+interface StrengthsWeaknessesResult {
+  strengths: string[]
+  weaknesses: string[]
+}
+
+async function generateStrengthsWeaknesses(
+  cv: string,
+  jobOffer: string,
+  apiKey: string,
+): Promise<StrengthsWeaknessesResult> {
+  const raw = await generateText({
+    system: STRENGTHS_WEAKNESSES_SYSTEM,
+    prompt: strengthsWeaknessesPrompt(cv, jobOffer),
+    temperature: 0.2,
+    maxTokens: 200,
+    apiKey,
+  })
+
+  const parsed = JSON.parse(raw) as StrengthsWeaknessesResult
+
+  if (!Array.isArray(parsed.strengths) || !Array.isArray(parsed.weaknesses)) {
+    throw new Error('strengths or weaknesses field missing or not an array')
+  }
+
+  return {
+    strengths: parsed.strengths.slice(0, 4),
+    weaknesses: parsed.weaknesses.slice(0, 3),
+  }
+}
+
 // ─── Handler ──────────────────────────────────────────────────────────────────
 
 export default defineEventHandler(async (event): Promise<AnalyzeResponse> => {
@@ -143,18 +206,13 @@ export default defineEventHandler(async (event): Promise<AnalyzeResponse> => {
   const { aiApiKey } = useRuntimeConfig()
 
   try {
-    const [coverLetter, { matchScore, reason }] = await Promise.all([
+    const [coverLetter, { matchScore, reason }, { strengths, weaknesses }] = await Promise.all([
       generateCoverLetter(cv, jobOffer, aiApiKey),
       generateMatchScore(cv, jobOffer, aiApiKey),
+      generateStrengthsWeaknesses(cv, jobOffer, aiApiKey),
     ])
 
-    return {
-      coverLetter,
-      matchScore,
-      reason,
-      strengths: [],
-      weaknesses: [],
-    }
+    return { coverLetter, matchScore, reason, strengths, weaknesses }
   } catch (err) {
     console.error('[analyze] generation failed:', err)
     throw createError({ statusCode: 502, message: 'AI service unavailable.' })
