@@ -33,43 +33,65 @@ withDefaults(defineProps<Props>(), {
   align-items: center;
   justify-content: center;
   gap: $space-2;
-  padding: $space-3 $space-6;
+  padding: $space-3 $space-8;
   border: none;
   border-radius: $border-radius-base;
   font-size: $font-size-base;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
   cursor: pointer;
-  transition: background-color $transition-base, opacity $transition-base;
+  transition: opacity $transition-base, transform $transition-base, box-shadow $transition-base;
+  letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &:hover::after { opacity: 1; }
+
+  &:active { transform: scale(0.98); }
 
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.45;
     cursor: not-allowed;
+    transform: none;
   }
 
   &--primary {
-    background-color: $color-primary;
+    background: $gradient-brand;
     color: #fff;
+    box-shadow: 0 2px 12px rgba(79, 70, 229, 0.35);
 
     &:hover:not(:disabled) {
-      background-color: $color-primary-hover;
+      box-shadow: 0 4px 20px rgba(79, 70, 229, 0.45);
     }
   }
 
   &--secondary {
-    background-color: transparent;
+    background: transparent;
     color: $color-primary;
-    border: 1px solid $color-primary;
+    border: 1.5px solid rgba($color-primary, 0.35);
+    box-shadow: none;
 
     &:hover:not(:disabled) {
-      background-color: rgba($color-primary, 0.05);
+      background: $color-primary-light;
+      border-color: $color-primary;
     }
   }
+
+  &--loading { pointer-events: none; }
 
   &__spinner {
     width: 1em;
     height: 1em;
-    border: 2px solid currentColor;
-    border-top-color: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
   }

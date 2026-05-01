@@ -3,6 +3,18 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-01',
 
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+        { rel: 'apple-touch-icon', href: '/favicon.png' },
+      ],
+      meta: [
+        { name: 'theme-color', content: '#4f46e5' },
+      ],
+    },
+  },
+
   typescript: {
     strict: true,
     typeCheck: true,

@@ -55,33 +55,36 @@ function onInput(event: Event): void {
 
   &__label {
     font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
+    font-weight: $font-weight-semibold;
     color: $color-text;
+    letter-spacing: -0.01em;
   }
 
   &__required {
-    color: $color-error;
+    color: $color-primary;
     margin-left: $space-1;
   }
 
   &__field {
     width: 100%;
-    padding: $space-3;
-    border: 1px solid $color-border;
+    padding: $space-3 $space-4;
+    border: 1.5px solid $color-border;
     border-radius: $border-radius-base;
-    background-color: $color-surface;
+    background-color: rgba(255, 255, 255, 0.7);
     color: $color-text;
     resize: vertical;
-    transition: border-color $transition-base, box-shadow $transition-base;
+    transition: border-color $transition-base, box-shadow $transition-base, background-color $transition-base;
 
     &::placeholder {
       color: $color-text-muted;
+      opacity: 0.7;
     }
 
     &:focus {
       outline: none;
       border-color: $color-primary;
-      box-shadow: 0 0 0 3px rgba($color-primary, 0.12);
+      background-color: $color-surface;
+      box-shadow: $shadow-glow;
     }
 
     &:disabled {
