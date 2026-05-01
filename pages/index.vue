@@ -3,12 +3,11 @@
 
     <!-- Hero -->
     <header class="home__hero">
-      <span class="home__hero-badge">AI-Powered Career Tool</span>
-      <h1 class="home__title">Find your perfect<br><em class="home__title-accent">job match</em></h1>
-      <p class="home__subtitle">
-        Paste any job description and your CV — get an instant match score,<br class="home__br">
-        strengths analysis, and a tailored cover letter in seconds.
-      </p>
+      <span class="home__hero-badge">{{ t('hero_badge') }}</span>
+      <h1 class="home__title">
+        {{ t('hero_title_1') }}<br><em class="home__title-accent">{{ t('hero_title_2') }}</em>
+      </h1>
+      <p class="home__subtitle">{{ t('hero_subtitle') }}</p>
     </header>
 
     <!-- Form -->
@@ -17,24 +16,23 @@
         <AppTextarea
           id="job-offer"
           v-model="jobOffer"
-          label="Job Description"
-          placeholder="Paste the full job posting here…"
+          :label="t('job_description_label')"
+          :placeholder="t('job_description_ph')"
           :rows="9"
           required
-          hint="Supports full descriptions — the longer, the better."
+          :hint="t('job_description_hint')"
           :error="fieldErrors.jobOffer"
           :disabled="isPending"
           @input="clearFieldError('jobOffer')"
         />
-
         <AppTextarea
           id="cv"
           v-model="cv"
-          label="Your CV"
-          placeholder="Paste your CV content here…"
+          :label="t('cv_label')"
+          :placeholder="t('cv_ph')"
           :rows="9"
           required
-          hint="Plain text works best."
+          :hint="t('cv_hint')"
           :error="fieldErrors.cv"
           :disabled="isPending"
           @input="clearFieldError('cv')"
@@ -45,17 +43,24 @@
         <AppTextarea
           id="soft-skills"
           v-model="softSkills"
-          label="Soft Skills"
-          placeholder="e.g. Strong communicator, empathetic leader, detail-oriented, fast learner, collaborative under pressure…"
+          :label="t('soft_skills_label')"
+          :placeholder="t('soft_skills_ph')"
           :rows="3"
-          hint="Optional — 1 to 2 will be woven naturally into your cover letter."
+          :hint="t('soft_skills_hint')"
           :disabled="isPending"
+        />
+      </div>
+
+      <div class="home__output-lang">
+        <OutputLangSelector
+          v-model="outputLanguage"
+          :label="t('output_lang_label')"
         />
       </div>
 
       <div class="home__actions">
         <AppButton type="submit" :loading="isPending" :disabled="!canSubmit">
-          {{ isPending ? 'Analyzing…' : 'Analyze my match' }}
+          {{ isPending ? t('analyzing_btn') : t('analyze_btn') }}
         </AppButton>
       </div>
     </form>
@@ -75,15 +80,15 @@
         <ScoreCard :score="result.matchScore" :reason="result.reason" />
 
         <div class="results__insights">
-          <InsightList title="Strengths" variant="strength" :items="result.strengths" />
-          <InsightList title="Weaknesses" variant="weakness" :items="result.weaknesses" />
+          <InsightList :title="t('strengths_title')" variant="strength" :items="result.strengths" />
+          <InsightList :title="t('weaknesses_title')" variant="weakness" :items="result.weaknesses" />
         </div>
 
-        <ResultCard title="Cover Letter">
+        <ResultCard :title="t('cover_letter_title')">
           <template #actions>
             <button class="copy-btn" :class="{ 'copy-btn--copied': copied }" @click="copyLetter">
               <span class="copy-btn__icon" aria-hidden="true">{{ copied ? '✓' : '⎘' }}</span>
-              {{ copied ? 'Copied!' : 'Copy' }}
+              {{ copied ? t('copied_btn') : t('copy_btn') }}
             </button>
           </template>
           <p class="results__cover-letter">{{ result.coverLetter }}</p>
@@ -91,7 +96,7 @@
 
         <div class="results__retry">
           <AppButton variant="secondary" type="button" @click="handleAnalyze" :disabled="isPending">
-            Re-analyze
+            {{ t('re_analyze_btn') }}
           </AppButton>
         </div>
       </div>
@@ -102,11 +107,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from '~/composables/useI18n'
 import { useJobAnalysis } from '~/composables/useJobAnalysis'
 
 definePageMeta({ layout: 'default' })
 
-const { jobOffer, cv, softSkills, isPending, canSubmit, result, error, fieldErrors, clearFieldError, handleAnalyze } = useJobAnalysis()
+const { t } = useI18n()
+const { jobOffer, cv, softSkills, outputLanguage, isPending, canSubmit, result, error, fieldErrors, clearFieldError, handleAnalyze } = useJobAnalysis()
 
 const copied = ref(false)
 
@@ -178,8 +185,6 @@ async function copyLetter() {
   @media (min-width: $bp-mobile) { font-size: $font-size-lg; }
 }
 
-.home__br { display: none; @media (min-width: 520px) { display: inline; } }
-
 // ─── Form ─────────────────────────────────────────────────────────────────────
 .home__form {
   display: flex;
@@ -216,6 +221,11 @@ async function copyLetter() {
   border-top: 1px dashed $color-border;
 }
 
+.home__output-lang {
+  padding-top: $space-2;
+  border-top: 1px dashed $color-border;
+}
+
 .home__actions {
   display: flex;
   justify-content: stretch;
@@ -224,7 +234,6 @@ async function copyLetter() {
 
   :deep(.app-button) {
     width: 100%;
-
     @media (min-width: $bp-mobile) { width: auto; }
   }
 }
@@ -312,5 +321,4 @@ async function copyLetter() {
 // ─── Fade transition ──────────────────────────────────────────────────────────
 .fade-enter-active { transition: opacity 0.4s ease, transform 0.4s ease; }
 .fade-enter-from   { opacity: 0; transform: translateY(12px); }
-
 </style>

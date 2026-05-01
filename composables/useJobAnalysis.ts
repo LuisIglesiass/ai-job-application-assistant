@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { useI18n } from '~/composables/useI18n'
 
 interface AnalyzeResponse {
   coverLetter: string
@@ -16,13 +17,16 @@ interface FieldErrors {
 const MIN_LENGTH = 20
 
 export function useJobAnalysis() {
-  const jobOffer = ref<string>('')
-  const cv = ref<string>('')
-  const softSkills = ref<string>('')
-  const isPending = ref<boolean>(false)
-  const result = ref<AnalyzeResponse | null>(null)
-  const error = ref<string | null>(null)
-  const fieldErrors = ref<FieldErrors>({ cv: null, jobOffer: null })
+  const { t } = useI18n()
+
+  const jobOffer      = ref<string>('')
+  const cv            = ref<string>('')
+  const softSkills    = ref<string>('')
+  const outputLanguage = ref<string>('German')
+  const isPending     = ref<boolean>(false)
+  const result        = ref<AnalyzeResponse | null>(null)
+  const error         = ref<string | null>(null)
+  const fieldErrors   = ref<FieldErrors>({ cv: null, jobOffer: null })
 
   const canSubmit = computed(
     () => jobOffer.value.trim().length > 0 && cv.value.trim().length > 0,
@@ -32,15 +36,15 @@ export function useJobAnalysis() {
     fieldErrors.value = { cv: null, jobOffer: null }
 
     if (!cv.value.trim()) {
-      fieldErrors.value.cv = 'Please paste your CV before analyzing.'
+      fieldErrors.value.cv = t('err_cv_required')
     } else if (cv.value.trim().length < MIN_LENGTH) {
-      fieldErrors.value.cv = 'Your CV is too short. Please add more detail.'
+      fieldErrors.value.cv = t('err_cv_short')
     }
 
     if (!jobOffer.value.trim()) {
-      fieldErrors.value.jobOffer = 'Please paste the job description before analyzing.'
+      fieldErrors.value.jobOffer = t('err_job_required')
     } else if (jobOffer.value.trim().length < MIN_LENGTH) {
-      fieldErrors.value.jobOffer = 'The job description is too short. Please add more detail.'
+      fieldErrors.value.jobOffer = t('err_job_short')
     }
 
     return !fieldErrors.value.cv && !fieldErrors.value.jobOffer
@@ -61,23 +65,32 @@ export function useJobAnalysis() {
     try {
       const data = await $fetch<AnalyzeResponse>('/api/analyze', {
         method: 'POST',
-        body: { cv: cv.value, jobOffer: jobOffer.value, softSkills: softSkills.value || undefined },
+        body: {
+          cv: cv.value,
+          jobOffer: jobOffer.value,
+          softSkills: softSkills.value || undefined,
+          outputLanguage: outputLanguage.value,
+        },
       })
       result.value = data
     } catch (err: unknown) {
       const apiError = err as { data?: { message?: string }; status?: number } | null
 
       if (apiError?.status === 503) {
-        error.value = 'The AI service is currently unavailable. Please try again later.'
+        error.value = t('error_ai_unavailable')
       } else if (apiError?.data?.message) {
         error.value = apiError.data.message
       } else {
-        error.value = 'Something went wrong. Please try again.'
+        error.value = t('error_generic')
       }
     } finally {
       isPending.value = false
     }
   }
 
-  return { jobOffer, cv, softSkills, isPending, canSubmit, result, error, fieldErrors, clearFieldError, handleAnalyze }
+  return {
+    jobOffer, cv, softSkills, outputLanguage,
+    isPending, canSubmit, result, error, fieldErrors,
+    clearFieldError, handleAnalyze,
+  }
 }

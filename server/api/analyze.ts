@@ -1,9 +1,13 @@
 import { generateText } from '~/lib/ai-client'
 
+const ALLOWED_LANGUAGES = ['German', 'English', 'Spanish'] as const
+type OutputLanguage = typeof ALLOWED_LANGUAGES[number]
+
 interface AnalyzeRequest {
   cv: string
   jobOffer: string
   softSkills?: string
+  outputLanguage?: string
 }
 
 interface AnalyzeResponse {
@@ -31,7 +35,7 @@ function safeParseJSON<T>(raw: string): T {
 const COVER_LETTER_SYSTEM =
   'You are a precise career assistant. Write concise and realistic cover letters. Avoid generic phrases. Respond ONLY with a valid JSON object — no markdown, no extra text.'
 
-function coverLetterPrompt(cv: string, jobOffer: string, softSkills?: string): string {
+function coverLetterPrompt(cv: string, jobOffer: string, outputLanguage: string, softSkills?: string): string {
   const softSkillsBlock = softSkills
     ? `\nCandidate's soft skills:\n${softSkills}\n- Weave 1–2 of the most relevant ones naturally into the letter\n- Do NOT list them explicitly — integrate them through examples or tone\n`
     : ''
@@ -43,7 +47,7 @@ Job Offer:
 ${jobOffer}
 ${softSkillsBlock}
 Task:
-Write a professional cover letter in German.
+Write a professional cover letter in ${outputLanguage}.
 
 Rules:
 - Max 180 words
@@ -55,10 +59,10 @@ Respond with this JSON structure only:
 {"coverLetter": "string"}`
 }
 
-async function generateCoverLetter(cv: string, jobOffer: string, apiKey: string, softSkills?: string): Promise<string> {
+async function generateCoverLetter(cv: string, jobOffer: string, apiKey: string, outputLanguage: string, softSkills?: string): Promise<string> {
   const raw = await generateText({
     system: COVER_LETTER_SYSTEM,
-    prompt: coverLetterPrompt(cv, jobOffer, softSkills),
+    prompt: coverLetterPrompt(cv, jobOffer, outputLanguage, softSkills),
     temperature: 0.4,
     maxTokens: 600,
     apiKey,
@@ -229,10 +233,13 @@ export default defineEventHandler(async (event): Promise<AnalyzeResponse> => {
   const cvTruncated = truncate(cv, MAX_CHARS.cv)
   const jobOfferTruncated = truncate(jobOffer, MAX_CHARS.jobOffer)
   const softSkills = body.softSkills ? truncate(body.softSkills.trim(), MAX_CHARS.softSkills) : undefined
+  const outputLanguage: OutputLanguage = ALLOWED_LANGUAGES.includes(body.outputLanguage as OutputLanguage)
+    ? (body.outputLanguage as OutputLanguage)
+    : 'German'
 
   try {
     const [coverLetter, { matchScore, reason }, { strengths, weaknesses }] = await Promise.all([
-      generateCoverLetter(cvTruncated, jobOfferTruncated, aiApiKey, softSkills),
+      generateCoverLetter(cvTruncated, jobOfferTruncated, aiApiKey, outputLanguage, softSkills),
       generateMatchScore(cvTruncated, jobOfferTruncated, aiApiKey),
       generateStrengthsWeaknesses(cvTruncated, jobOfferTruncated, aiApiKey),
     ])
