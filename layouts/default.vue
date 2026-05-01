@@ -11,7 +11,10 @@
             height="40"
           />
         </a>
-        <span class="app-header__badge">Beta</span>
+        <div class="app-header__right">
+          <LangSwitcher />
+          <span class="app-header__badge">Beta</span>
+        </div>
       </div>
     </header>
 
@@ -73,6 +76,12 @@ const year = new Date().getFullYear()
 
     @media (min-width: $bp-mobile) { height: 60px; }
     @media (min-width: $bp-tablet) { height: 80px; }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
   }
 
   &__badge {
