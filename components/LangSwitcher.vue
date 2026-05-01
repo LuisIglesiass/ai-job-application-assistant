@@ -22,6 +22,7 @@ const options = [
   { value: 'en' as const, label: 'EN' },
   { value: 'es' as const, label: 'ES' },
   { value: 'de' as const, label: 'DE' },
+  { value: 'pt' as const, label: 'PT' },
 ]
 </script>
 

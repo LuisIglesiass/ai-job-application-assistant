@@ -92,9 +92,40 @@ const translations = {
     err_job_required:         'Bitte füge die Stellenbeschreibung ein, bevor du analysierst.',
     err_job_short:            'Die Stellenbeschreibung ist zu kurz. Bitte füge mehr Details hinzu.',
   },
+  pt: {
+    hero_badge:               'Ferramenta de carreira com IA',
+    hero_title_1:             'Encontra o teu',
+    hero_title_2:             'emprego ideal',
+    hero_subtitle:            'Cola qualquer descrição de emprego e o teu CV — obtém uma pontuação de compatibilidade, análise de pontos fortes e uma carta de apresentação em segundos.',
+    job_description_label:    'Descrição do emprego',
+    job_description_ph:       'Cola aqui a oferta de emprego completa…',
+    job_description_hint:     'Suporta descrições completas — quanto mais detalhe, melhor.',
+    cv_label:                 'O teu CV',
+    cv_ph:                    'Cola aqui o conteúdo do teu CV…',
+    cv_hint:                  'Texto simples funciona melhor.',
+    soft_skills_label:        'Soft Skills',
+    soft_skills_ph:           'ex. Boa comunicação, liderança empática, orientado ao detalhe…',
+    soft_skills_hint:         'Opcional — 1 a 2 serão integradas naturalmente na tua carta.',
+    output_lang_label:        'Idioma da carta',
+    analyze_btn:              'Analisar compatibilidade',
+    analyzing_btn:            'A analisar…',
+    cover_letter_title:       'Carta de apresentação',
+    strengths_title:          'Pontos fortes',
+    weaknesses_title:         'Pontos fracos',
+    match_score_title:        'Pontuação',
+    copy_btn:                 'Copiar',
+    copied_btn:               'Copiado!',
+    re_analyze_btn:           'Analisar novamente',
+    error_generic:            'Algo correu mal. Por favor, tenta novamente.',
+    error_ai_unavailable:     'O serviço de IA não está disponível. Tenta mais tarde.',
+    err_cv_required:          'Por favor, cola o teu CV antes de analisar.',
+    err_cv_short:             'O teu CV é demasiado curto. Adiciona mais detalhe.',
+    err_job_required:         'Por favor, cola a descrição do emprego antes de analisar.',
+    err_job_short:            'A descrição é demasiado curta. Adiciona mais detalhe.',
+  },
 } as const
 
-export type Locale = keyof typeof translations
+export type Locale = 'en' | 'es' | 'de' | 'pt'
 export type TranslationKey = keyof typeof translations.en
 
 export function useI18n() {
