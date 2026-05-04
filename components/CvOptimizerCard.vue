@@ -25,7 +25,7 @@
             {{ t('opt_weak_areas') }}
           </h4>
           <ul class="optimizer__list">
-            <li v-for="area in result.matchAnalysis.weakAreas" :key="area" class="optimizer__list-item">
+            <li v-for="area in result.matchAnalysis.weakAlignment" :key="area" class="optimizer__list-item">
               {{ area }}
             </li>
           </ul>
