@@ -46,6 +46,11 @@
   // Document scanner lines
   --color-doc-line:        #e8eaf0;
   --color-doc-line-thick:  #d0d4e0;
+
+  // Scrollbar
+  --scrollbar-track:       #ede9fe;
+  --scrollbar-thumb:       rgba(79, 70, 229, 0.28);
+  --scrollbar-thumb-hover: rgba(79, 70, 229, 0.52);
 }
 
 // ─── Dark theme ───────────────────────────────────────────────────────────────
@@ -93,6 +98,11 @@
   // Document scanner
   --color-doc-line:        #2a2a40;
   --color-doc-line-thick:  #363655;
+
+  // Scrollbar
+  --scrollbar-track:       #12121f;
+  --scrollbar-thumb:       rgba(79, 70, 229, 0.35);
+  --scrollbar-thumb-hover: rgba(79, 70, 229, 0.58);
 }
 
 // ─── Theme transition ─────────────────────────────────────────────────────────
@@ -107,6 +117,39 @@ html.theme-transition *::after {
     border-color     220ms ease,
     color            180ms ease,
     box-shadow       220ms ease !important;
+}
+
+// ─── Scrollbar ────────────────────────────────────────────────────────────────
+// Firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+// Webkit (Chrome, Safari, Edge)
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 // ─── Reset ────────────────────────────────────────────────────────────────────

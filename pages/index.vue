@@ -101,6 +101,9 @@
           <AppButton variant="secondary" type="button" :loading="isOptimizing" :disabled="isOptimizing" @click="handleOptimize">
             {{ isOptimizing ? t('opt_btn_loading') : t('opt_btn') }}
           </AppButton>
+          <AppButton variant="secondary" type="button" :loading="isApplying" :disabled="isApplying" @click="handleApply">
+            {{ isApplying ? t('apply_btn_loading') : t('apply_btn') }}
+          </AppButton>
         </div>
 
         <!-- Optimizer error -->
@@ -116,6 +119,19 @@
           </ResultCard>
         </transition>
 
+        <!-- Full application error -->
+        <div v-if="applyError" class="home__error" role="alert">
+          <span class="home__error-icon" aria-hidden="true">⚠</span>
+          <p>{{ applyError }}</p>
+        </div>
+
+        <!-- Full application results -->
+        <transition name="fade">
+          <ResultCard v-if="applyResult" :title="t('apply_title')">
+            <ApplicationCard :result="applyResult" />
+          </ResultCard>
+        </transition>
+
 
       </div>
     </transition>
@@ -128,12 +144,14 @@ import { ref } from 'vue'
 import { useI18n } from '~/composables/useI18n'
 import { useJobAnalysis } from '~/composables/useJobAnalysis'
 import { useOptimize } from '~/composables/useOptimize'
+import { useApply } from '~/composables/useApply'
 
 definePageMeta({ layout: 'default' })
 
 const { t } = useI18n()
 const { jobOffer, cv, softSkills, outputLanguage, isPending, canSubmit, result, error, fieldErrors, clearFieldError, handleAnalyze } = useJobAnalysis()
 const { isPending: isOptimizing, result: optimizeResult, error: optimizeError, optimize } = useOptimize()
+const { isPending: isApplying, result: applyResult, error: applyError, apply } = useApply()
 
 const copied = ref(false)
 
@@ -146,6 +164,10 @@ async function copyLetter() {
 
 function handleOptimize() {
   optimize(cv.value, jobOffer.value)
+}
+
+function handleApply() {
+  apply(cv.value, jobOffer.value)
 }
 </script>
 

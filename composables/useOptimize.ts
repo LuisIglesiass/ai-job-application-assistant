@@ -1,9 +1,11 @@
 import { ref } from 'vue'
 import type { OptimizeResponse } from '~/server/api/optimize'
 import { useI18n } from '~/composables/useI18n'
+import { useOutputLanguage } from '~/composables/useOutputLanguage'
 
 export function useOptimize() {
   const { t } = useI18n()
+  const { outputLanguage } = useOutputLanguage()
   const isPending = ref(false)
   const result    = ref<OptimizeResponse | null>(null)
   const error     = ref<string | null>(null)
@@ -16,7 +18,7 @@ export function useOptimize() {
     try {
       result.value = await $fetch<OptimizeResponse>('/api/optimize', {
         method: 'POST',
-        body: { cv, jobOffer },
+        body: { cv, jobOffer, outputLanguage: outputLanguage.value },
       })
     } catch (err: unknown) {
       const apiError = err as { data?: { message?: string }; status?: number } | null

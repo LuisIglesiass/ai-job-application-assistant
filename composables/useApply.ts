@@ -1,24 +1,24 @@
 import { ref } from 'vue'
-import type { ReviewResponse } from '~/server/api/review'
+import type { ApplyResponse } from '~/server/api/apply'
 import { useI18n } from '~/composables/useI18n'
 import { useOutputLanguage } from '~/composables/useOutputLanguage'
 
-export function useReview() {
+export function useApply() {
   const { t } = useI18n()
   const { outputLanguage } = useOutputLanguage()
   const isPending = ref(false)
-  const result    = ref<ReviewResponse | null>(null)
+  const result    = ref<ApplyResponse | null>(null)
   const error     = ref<string | null>(null)
 
-  async function review(cv: string): Promise<void> {
+  async function apply(cv: string, jobOffer: string): Promise<void> {
     isPending.value = true
     result.value = null
     error.value = null
 
     try {
-      result.value = await $fetch<ReviewResponse>('/api/review', {
+      result.value = await $fetch<ApplyResponse>('/api/apply', {
         method: 'POST',
-        body: { cv, outputLanguage: outputLanguage.value },
+        body: { cv, jobOffer, outputLanguage: outputLanguage.value },
       })
     } catch (err: unknown) {
       const apiError = err as { data?: { message?: string }; status?: number } | null
@@ -35,5 +35,5 @@ export function useReview() {
     }
   }
 
-  return { isPending, result, error, review }
+  return { isPending, result, error, apply }
 }

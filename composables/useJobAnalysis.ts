@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { useI18n } from '~/composables/useI18n'
+import { useOutputLanguage } from '~/composables/useOutputLanguage'
 
 interface AnalyzeResponse {
   coverLetter: string
@@ -18,11 +19,11 @@ const MIN_LENGTH = 20
 
 export function useJobAnalysis() {
   const { t } = useI18n()
+  const { outputLanguage } = useOutputLanguage()
 
-  const jobOffer      = ref<string>('')
-  const cv            = ref<string>('')
-  const softSkills    = ref<string>('')
-  const outputLanguage = ref<string>('German')
+  const jobOffer   = ref<string>('')
+  const cv         = ref<string>('')
+  const softSkills = ref<string>('')
   const isPending     = ref<boolean>(false)
   const result        = ref<AnalyzeResponse | null>(null)
   const error         = ref<string | null>(null)
