@@ -1,7 +1,9 @@
 import { generateText } from '~/lib/ai-client'
+import { withLanguage, sanitizeLanguage } from '~/lib/language-prompt'
 
 interface ReviewRequest {
   cv: string
+  outputLanguage?: string
 }
 
 export interface ReviewResponse {
@@ -33,8 +35,6 @@ function buildPrompt(cv: string): string {
   return `CV:
 ${cv}
 
-Analyze this CV and provide high-impact improvements to increase interview chances.
-
 Return ONLY this JSON structure:
 {
   "issues": ["string"],
@@ -53,7 +53,7 @@ Rules:
 - rewrites.experience: max 3 bullet points, each under 20 words, focus on impact
 - tips: max 5 practical career tips that increase chances of getting interviews
 - Think like a recruiter reviewing hundreds of CVs quickly
-- No generic advice, no vague suggestions, no long explanations`
+- No generic advice, no vague suggestions`
 }
 
 export default defineEventHandler(async (event): Promise<ReviewResponse> => {
@@ -66,16 +66,17 @@ export default defineEventHandler(async (event): Promise<ReviewResponse> => {
   }
 
   const { aiApiKey } = useRuntimeConfig()
-
   if (!aiApiKey) {
     console.error('[review] AI_API_KEY is not configured')
     throw createError({ statusCode: 503, message: 'The AI service is not configured. Please contact support.' })
   }
 
+  const outputLanguage = sanitizeLanguage(body.outputLanguage)
+
   let raw: string
   try {
     raw = await generateText({
-      system: SYSTEM,
+      system: withLanguage(SYSTEM, outputLanguage),
       prompt: buildPrompt(truncate(cv, MAX_LENGTH)),
       temperature: 0.2,
       maxTokens: 700,

@@ -1,8 +1,10 @@
 import { generateText } from '~/lib/ai-client'
+import { withLanguage, sanitizeLanguage } from '~/lib/language-prompt'
 
 interface OptimizeRequest {
   cv: string
   jobOffer: string
+  outputLanguage?: string
 }
 
 export interface OptimizeResponse {
@@ -58,14 +60,13 @@ Rules:
 - improvements: max 5 — specific, actionable, directly improve chances for THIS job — no generic advice
 - rewrites.summary: max 60 words, tailored to this job, relevant strengths only, no generic phrases
 - rewrites.experience: max 3 bullet points, each under 18 words, focus on impact, use action verbs
-- Think like a recruiter quickly scanning the CV to decide if the candidate is worth interviewing
-- Goal: increase the probability the candidate gets shortlisted for this specific job`
+- Think like a recruiter quickly scanning the CV to decide if the candidate is worth interviewing`
 }
 
 export default defineEventHandler(async (event): Promise<OptimizeResponse> => {
   const body = await readBody<OptimizeRequest>(event)
 
-  const cv = typeof body?.cv === 'string' ? body.cv.trim() : ''
+  const cv       = typeof body?.cv       === 'string' ? body.cv.trim()       : ''
   const jobOffer = typeof body?.jobOffer === 'string' ? body.jobOffer.trim() : ''
 
   if (!cv || cv.length < MIN_CHARS.cv) {
@@ -76,16 +77,17 @@ export default defineEventHandler(async (event): Promise<OptimizeResponse> => {
   }
 
   const { aiApiKey } = useRuntimeConfig()
-
   if (!aiApiKey) {
     console.error('[optimize] AI_API_KEY is not configured')
     throw createError({ statusCode: 503, message: 'The AI service is not configured. Please contact support.' })
   }
 
+  const outputLanguage = sanitizeLanguage(body.outputLanguage)
+
   let raw: string
   try {
     raw = await generateText({
-      system: SYSTEM,
+      system: withLanguage(SYSTEM, outputLanguage),
       prompt: buildPrompt(truncate(cv, MAX_CHARS.cv), truncate(jobOffer, MAX_CHARS.jobOffer)),
       temperature: 0.2,
       maxTokens: 800,
@@ -123,7 +125,7 @@ export default defineEventHandler(async (event): Promise<OptimizeResponse> => {
     },
     improvements: parsed.improvements.slice(0, 5),
     rewrites: {
-      summary: parsed.rewrites.summary,
+      summary:    parsed.rewrites.summary,
       experience: parsed.rewrites.experience.slice(0, 3),
     },
   }

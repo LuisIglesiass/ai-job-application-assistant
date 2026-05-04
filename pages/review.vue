@@ -25,7 +25,8 @@
         @input="cvError = null"
       />
 
-      <div class="review-page__actions">
+      <div class="review-page__toolbar">
+        <OutputLangSelector v-model="outputLanguage" :label="t('output_lang_label')" />
         <AppButton type="submit" :loading="isPending" :disabled="!cv.trim() || isPending">
           {{ isPending ? t('review_btn_loading') : t('review_btn') }}
         </AppButton>
@@ -55,11 +56,13 @@
 import { ref } from 'vue'
 import { useI18n } from '~/composables/useI18n'
 import { useReview } from '~/composables/useReview'
+import { useOutputLanguage } from '~/composables/useOutputLanguage'
 
 definePageMeta({ layout: 'default' })
 
 const { t } = useI18n()
 const { isPending, result, error, review } = useReview()
+const { outputLanguage } = useOutputLanguage()
 
 const cv = ref('')
 const cvError = ref<string | null>(null)
@@ -155,11 +158,16 @@ async function handleSubmit() {
   @media (min-width: $bp-tablet) { padding: $space-8; }
 }
 
-.review-page__actions {
+.review-page__toolbar {
   display: flex;
-  justify-content: stretch;
+  flex-direction: column;
+  gap: $space-3;
 
-  @media (min-width: $bp-mobile) { justify-content: flex-end; }
+  @media (min-width: $bp-mobile) {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
 
   :deep(.app-button) {
     width: 100%;

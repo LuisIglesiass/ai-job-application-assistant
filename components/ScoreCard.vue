@@ -9,7 +9,7 @@
     <div class="score-card__meta">
       <div class="score-card__label-row">
         <span class="score-card__pill" :class="scorePillClass">{{ scoreLabel }}</span>
-        <h2 class="score-card__label">Match Score</h2>
+        <h2 class="score-card__label">{{ t('match_score_title') }}</h2>
       </div>
       <p class="score-card__reason">{{ reason }}</p>
     </div>
@@ -18,6 +18,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from '~/composables/useI18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   score: number
@@ -46,10 +49,10 @@ onMounted(() => {
 })
 
 const scoreLabel = computed(() => {
-  if (props.score >= 90) return 'Excellent'
-  if (props.score >= 70) return 'Good match'
-  if (props.score >= 50) return 'Partial match'
-  return 'Weak match'
+  if (props.score >= 90) return t('score_excellent')
+  if (props.score >= 70) return t('score_good')
+  if (props.score >= 50) return t('score_partial')
+  return t('score_weak')
 })
 
 const scorePillClass = computed(() => {
