@@ -37,5 +37,22 @@ export default defineNuxtConfig({
     aiApiKey: process.env.AI_API_KEY ?? '',
   },
 
+  nitro: {
+    storage: {
+      // File-based storage for job tracker data.
+      // Swap driver to 'redis', 'cloudflare-kv-binding', etc. to scale up.
+      data: { driver: 'fs', base: './.data' },
+    },
+  },
+
+  components: [
+    { path: '~/components', pathPrefix: false },
+    { path: '~/features/job-tracker/components', pathPrefix: false },
+  ],
+
+  imports: {
+    dirs: ['composables', 'features/job-tracker'],
+  },
+
   devtools: { enabled: true },
 })
