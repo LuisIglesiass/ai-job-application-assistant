@@ -8,7 +8,7 @@ interface OptimizeRequest {
 export interface OptimizeResponse {
   matchAnalysis: {
     missingSkills: string[]
-    weakAreas: string[]
+    weakAlignment: string[]
   }
   improvements: string[]
   rewrites: {
@@ -30,7 +30,7 @@ function safeParseJSON<T>(raw: string): T {
 }
 
 const SYSTEM =
-  'You are a strict and highly practical career optimization assistant. Analyze a CV against a job offer and provide actionable improvements. Return ONLY valid JSON — no markdown, no extra text.'
+  'You are a strict and highly practical career optimization assistant. Analyze a CV against a job offer and improve it to maximize interview chances. Return ONLY valid JSON — no markdown, no extra text.'
 
 function buildPrompt(cv: string, jobOffer: string): string {
   return `CV:
@@ -39,13 +39,11 @@ ${cv}
 Job Offer:
 ${jobOffer}
 
-Identify gaps between the CV and job requirements, suggest specific improvements, and rewrite key CV sections to better match the job.
-
 Return ONLY this JSON structure:
 {
   "matchAnalysis": {
     "missingSkills": ["string"],
-    "weakAreas": ["string"]
+    "weakAlignment": ["string"]
   },
   "improvements": ["string"],
   "rewrites": {
@@ -55,14 +53,13 @@ Return ONLY this JSON structure:
 }
 
 Rules:
-- missingSkills: concrete skills/tools missing from the CV (max 6)
-- weakAreas: sections or aspects that are weak relative to the job (max 4)
-- improvements: max 5 actionable items, no generic advice
-- rewrites.summary: max 60 words, tailored to the job, relevant strengths only
-- rewrites.experience: max 3 bullet points, each under 20 words, focus on impact
-- Think like a recruiter reviewing quickly
-- Be realistic, not optimistic
-- No markdown, no extra text`
+- missingSkills: max 5 — only real, job-relevant gaps (e.g. "Angular experience", "REST API integration")
+- weakAlignment: max 4 — areas where CV exists but is not well presented or relevant for this job
+- improvements: max 5 — specific, actionable, directly improve chances for THIS job — no generic advice
+- rewrites.summary: max 60 words, tailored to this job, relevant strengths only, no generic phrases
+- rewrites.experience: max 3 bullet points, each under 18 words, focus on impact, use action verbs
+- Think like a recruiter quickly scanning the CV to decide if the candidate is worth interviewing
+- Goal: increase the probability the candidate gets shortlisted for this specific job`
 }
 
 export default defineEventHandler(async (event): Promise<OptimizeResponse> => {
@@ -85,14 +82,11 @@ export default defineEventHandler(async (event): Promise<OptimizeResponse> => {
     throw createError({ statusCode: 503, message: 'The AI service is not configured. Please contact support.' })
   }
 
-  const cvTruncated = truncate(cv, MAX_CHARS.cv)
-  const jobOfferTruncated = truncate(jobOffer, MAX_CHARS.jobOffer)
-
   let raw: string
   try {
     raw = await generateText({
       system: SYSTEM,
-      prompt: buildPrompt(cvTruncated, jobOfferTruncated),
+      prompt: buildPrompt(truncate(cv, MAX_CHARS.cv), truncate(jobOffer, MAX_CHARS.jobOffer)),
       temperature: 0.2,
       maxTokens: 800,
       apiKey: aiApiKey,
@@ -113,7 +107,7 @@ export default defineEventHandler(async (event): Promise<OptimizeResponse> => {
   if (
     !parsed?.matchAnalysis ||
     !Array.isArray(parsed.matchAnalysis.missingSkills) ||
-    !Array.isArray(parsed.matchAnalysis.weakAreas) ||
+    !Array.isArray(parsed.matchAnalysis.weakAlignment) ||
     !Array.isArray(parsed.improvements) ||
     typeof parsed.rewrites?.summary !== 'string' ||
     !Array.isArray(parsed.rewrites?.experience)
@@ -124,8 +118,8 @@ export default defineEventHandler(async (event): Promise<OptimizeResponse> => {
 
   return {
     matchAnalysis: {
-      missingSkills: parsed.matchAnalysis.missingSkills.slice(0, 6),
-      weakAreas: parsed.matchAnalysis.weakAreas.slice(0, 4),
+      missingSkills: parsed.matchAnalysis.missingSkills.slice(0, 5),
+      weakAlignment: parsed.matchAnalysis.weakAlignment.slice(0, 4),
     },
     improvements: parsed.improvements.slice(0, 5),
     rewrites: {
